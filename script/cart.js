@@ -12,7 +12,7 @@ function addToCart(id, quantity) {
     // Increment quantity if product is already in cart
     if (existing) existing.quantity += quantity 
     // If not, copy the existing products object and add quantity property
-    cartItems.push({ ...products[index], quantity });
+    else cartItems.push({ ...products[index], quantity });
   
     localStorage.setItem('cartItems', JSON.stringify(cartItems));
     cartCount.textContent = cartItems.length;
