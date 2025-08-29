@@ -2,8 +2,7 @@
 let cartOverview = ''
 
 cartItems.forEach(item => {
-    console.log(item)
-    cartOverview += `<div class="cart-item-container data-id="${item.id}"">
+    cartOverview += `<div class="cart-item-container" data-id="${item.id}">
                         <div class="delivery-date">
                             Delivery date: Tuesday, June 21
                         </div>
@@ -79,4 +78,37 @@ cartItems.forEach(item => {
                         </div>
                     </div>`;
     return document.querySelector('.order-summary').innerHTML = cartOverview;
-})
+});
+
+document.querySelector('.order-summary').addEventListener('click', e => {
+  const container = e.target.closest('.cart-item-container');
+  if (!container) return;
+
+  const productId = container.dataset.id;
+  const item = cartItems.find(product => product.id === productId);
+
+  if (e.target.classList.contains('update-quantity-link')) {
+    const qtyLabel = container.querySelector('.quantity-label');
+    qtyLabel.innerHTML = `<input type="number" class="new-quantity" min="1" max="20" value="${item.quantity}" />`;
+
+    e.target.textContent = 'Save';
+    e.target.classList.remove('update-quantity-link');
+    e.target.classList.add('save-quantity-link');
+  }
+
+  if (e.target.classList.contains('save-quantity-link')) {
+    const updatedQty = container.querySelector('.new-quantity');
+    const newVal = parseInt(updatedQty.value, 10);
+
+    if (!isNaN(newVal) && newVal > 0) {
+      item.quantity = newVal;
+      localStorage.setItem('cartItems', JSON.stringify(cartItems));
+    }
+
+    container.querySelector('.quantity-label').textContent = item.quantity;
+
+    e.target.textContent = 'Update';
+    e.target.classList.remove('save-quantity-link');
+    e.target.classList.add('update-quantity-link');
+  }
+});
