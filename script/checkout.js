@@ -1,4 +1,6 @@
 // This file handles all the checkout logic and functionality
+import { globalEventListener } from './utils/globalListener.js';
+
 let cartOverview = ''
 
 cartItems.forEach(item => {
@@ -80,14 +82,9 @@ cartItems.forEach(item => {
     document.querySelector('.order-summary').innerHTML = cartOverview;
 });
 
-function handleEventListeners(type, element, callback) {
-    element.addEventListener(type, e => {
-        callback(e)
-    })
-}
 const orderSummaryBoxes = document.querySelector('.order-summary');
 // Update function code
-handleEventListeners('click', orderSummaryBoxes, e => {
+globalEventListener('click', orderSummaryBoxes, e => {
     const updatedLinks = e.target.closest('.update-quantity-link');
     const saveLinks = e.target.closest('.save-quantity-link');
 
@@ -133,7 +130,7 @@ function deleteCartItem(id) {
     location.reload()
 }
 
-handleEventListeners('click', orderSummaryBoxes, e => {
+globalEventListener('click', orderSummaryBoxes, e => {
     const deleteLinks = e.target.closest('.delete-quantity-link');
     
     if (deleteLinks) deleteCartItem( deleteLinks.dataset.id);
