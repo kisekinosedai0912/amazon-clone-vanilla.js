@@ -25,7 +25,7 @@ cartItems.forEach(item => {
                                     <span class="update-quantity-link link-primary" data-id="${item.id}">
                                         Update
                                     </span>
-                                    <span class="delete-quantity-link link-primary">
+                                    <span class="delete-quantity-link link-primary" data-id="${item.id}">
                                         Delete
                                     </span>
                                 </div>
@@ -38,7 +38,7 @@ cartItems.forEach(item => {
                                 <div class="delivery-option">
                                     <input type="radio" checked
                                         class="delivery-option-input"
-                                        name="delivery-option-1">
+                                        name="delivery-option-${item.id}">
                                     <div>
                                         <div class="delivery-option-date">
                                         Tuesday, June 21
@@ -51,7 +51,7 @@ cartItems.forEach(item => {
                                 <div class="delivery-option">
                                     <input type="radio"
                                         class="delivery-option-input"
-                                        name="delivery-option-1">
+                                        name="delivery-option-${item.id}">
                                     <div>
                                         <div class="delivery-option-date">
                                         Wednesday, June 15
@@ -64,7 +64,7 @@ cartItems.forEach(item => {
                                 <div class="delivery-option">
                                     <input type="radio"
                                         class="delivery-option-input"
-                                        name="delivery-option-1">
+                                        name="delivery-option-${item.id}">
                                     <div>
                                         <div class="delivery-option-date">
                                         Monday, June 13
@@ -80,13 +80,13 @@ cartItems.forEach(item => {
     document.querySelector('.order-summary').innerHTML = cartOverview;
 });
 
-const orderSummaryBoxes = document.querySelector('.order-summary');
-
 function handleEventListeners(type, element, callback) {
     element.addEventListener(type, e => {
         callback(e)
     })
 }
+const orderSummaryBoxes = document.querySelector('.order-summary');
+// Update function code
 handleEventListeners('click', orderSummaryBoxes, e => {
     const updatedLinks = e.target.closest('.update-quantity-link');
     const saveLinks = e.target.closest('.save-quantity-link');
@@ -122,4 +122,19 @@ handleEventListeners('click', orderSummaryBoxes, e => {
         saveLinks.classList.remove('save-quantity-link');
         saveLinks.classList.add('update-quantity-link');
     }
+})
+
+// Delete function code
+function deleteCartItem(id) {
+    const productToDelete = cartItems.findIndex(item => item.id === id);
+    if (productToDelete !== -1) cartItems.splice(productToDelete, 1);
+    
+    localStorage.setItem('cartItems', JSON.stringify(cartItems));
+    location.reload()
+}
+
+handleEventListeners('click', orderSummaryBoxes, e => {
+    const deleteLinks = e.target.closest('.delete-quantity-link');
+    
+    if (deleteLinks) deleteCartItem( deleteLinks.dataset.id);
 })

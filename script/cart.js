@@ -1,5 +1,5 @@
 // Cart functionality js
-const cartItems = JSON.parse(localStorage.getItem('cartItems')) || [];
+let cartItems = JSON.parse(localStorage.getItem('cartItems')) || [];
 const cartCount = document.getElementById('cart-count');
 cartCount.textContent = cartItems.length;
 
