@@ -2,7 +2,7 @@
 let cartOverview = ''
 
 cartItems.forEach(item => {
-    cartOverview += `<div class="cart-item-container" data-id="${item.id}">
+    cartOverview += `<div class="cart-item-container">
                         <div class="delivery-date">
                             Delivery date: Tuesday, June 21
                         </div>
@@ -22,7 +22,7 @@ cartItems.forEach(item => {
                                     <span>
                                         Quantity: <span class="quantity-label">${item.quantity}</span>
                                     </span>
-                                    <span class="update-quantity-link link-primary">
+                                    <span class="update-quantity-link link-primary" data-id="${item.id}">
                                         Update
                                     </span>
                                     <span class="delete-quantity-link link-primary">
@@ -77,38 +77,49 @@ cartItems.forEach(item => {
                             </div>
                         </div>
                     </div>`;
-    return document.querySelector('.order-summary').innerHTML = cartOverview;
+    document.querySelector('.order-summary').innerHTML = cartOverview;
 });
 
-document.querySelector('.order-summary').addEventListener('click', e => {
-  const container = e.target.closest('.cart-item-container');
-  if (!container) return;
+const orderSummaryBoxes = document.querySelector('.order-summary');
 
-  const productId = container.dataset.id;
-  const item = cartItems.find(product => product.id === productId);
+function handleEventListeners(type, element, callback) {
+    element.addEventListener(type, e => {
+        callback(e)
+    })
+}
+handleEventListeners('click', orderSummaryBoxes, e => {
+    const updatedLinks = e.target.closest('.update-quantity-link');
+    const saveLinks = e.target.closest('.save-quantity-link');
 
-  if (e.target.classList.contains('update-quantity-link')) {
-    const qtyLabel = container.querySelector('.quantity-label');
-    qtyLabel.innerHTML = `<input type="number" class="new-quantity" min="1" max="20" value="${item.quantity}" />`;
+    if (updatedLinks) {
+        const productId = updatedLinks.dataset.id;
+        const product = cartItems.find(item => item.id === productId);
+        const container = updatedLinks.closest('.cart-item-container');
+        const qtyLabel = container.querySelector('.quantity-label');
 
-    e.target.textContent = 'Save';
-    e.target.classList.remove('update-quantity-link');
-    e.target.classList.add('save-quantity-link');
-  }
+        qtyLabel.innerHTML = `<input type="number" class="new-quantity" min="1" max="20" value="${product.quantity}" />`;
 
-  if (e.target.classList.contains('save-quantity-link')) {
-    const updatedQty = container.querySelector('.new-quantity');
-    const newVal = parseInt(updatedQty.value, 10);
-
-    if (!isNaN(newVal) && newVal > 0) {
-      item.quantity = newVal;
-      localStorage.setItem('cartItems', JSON.stringify(cartItems));
+        updatedLinks.textContent = 'Save';
+        updatedLinks.classList.remove('update-quantity-link');
+        updatedLinks.classList.add('save-quantity-link');
     }
 
-    container.querySelector('.quantity-label').textContent = item.quantity;
+    if (saveLinks) {
+        const productId = saveLinks.dataset.id; 
+        const product = cartItems.find(item => item.id === productId);
+        const container = saveLinks.closest('.cart-item-container');
+        const updatedQty = container.querySelector('.new-quantity');
+        const parsedQty = parseInt(updatedQty.value, 10);
 
-    e.target.textContent = 'Update';
-    e.target.classList.remove('save-quantity-link');
-    e.target.classList.add('update-quantity-link');
-  }
-});
+        if (!isNaN(parsedQty) && parsedQty > 0) {
+        product.quantity = parsedQty;
+        localStorage.setItem('cartItems', JSON.stringify(cartItems));
+        }
+
+        container.querySelector('.quantity-label').textContent = product.quantity;
+
+        saveLinks.textContent = 'Update';
+        saveLinks.classList.remove('save-quantity-link');
+        saveLinks.classList.add('update-quantity-link');
+    }
+})
