@@ -4,12 +4,11 @@ import { formatDate } from './utils/date.js';
 
 let cartOverview = '';
 let setDate;
-const newFormattedDate = formatDate(setDate, 7);
 
 cartItems.forEach(item => {
     cartOverview += `<div class="cart-item-container">
                         <div class="delivery-date">
-                            Delivery date: Tuesday, June 21
+                            Delivery date: Wednesday, September 3
                         </div>
 
                         <div class="cart-item-details-grid">
@@ -46,7 +45,7 @@ cartItems.forEach(item => {
                                         name="delivery-option-${item.id}">
                                     <div>
                                         <div class="delivery-option-date">
-                                        ${newFormattedDate}
+                                        ${formatDate(setDate, 7)}
                                         </div>
                                         <div class="delivery-option-price">
                                         FREE Shipping
@@ -62,7 +61,7 @@ cartItems.forEach(item => {
                                         ${formatDate(setDate, 3)}
                                         </div>
                                         <div class="delivery-option-price">
-                                        $4.99 - Shipping
+                                        ₱150 - Shipping
                                         </div>
                                     </div>
                                 </div>
@@ -75,7 +74,7 @@ cartItems.forEach(item => {
                                         ${formatDate(setDate, 1)}
                                         </div>
                                         <div class="delivery-option-price">
-                                        $9.99 - Shipping
+                                        ₱200 - Shipping
                                         </div>
                                     </div>
                                 </div>
@@ -123,6 +122,17 @@ globalEventListener('click', orderSummaryBoxes, e => {
         saveLinks.classList.add('update-quantity-link');
     }
 })
+
+globalEventListener('change', orderSummaryBoxes, e => {
+  if (e.target.matches(`input[type="radio"][name^="delivery-option-"]`)) {
+    const optionContainer = e.target.closest('.delivery-option');
+    const productContainer = e.target.closest('.cart-item-container');
+    const deliveryDate = productContainer.querySelector('.delivery-date');
+    const date = optionContainer.querySelector('.delivery-option-date');
+    
+    return deliveryDate.textContent = `Delivery date: ${date.textContent}`;
+  }
+});
 
 // Delete function code
 function deleteCartItem(id) {
