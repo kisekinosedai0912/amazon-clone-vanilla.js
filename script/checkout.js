@@ -1,7 +1,10 @@
 // This file handles all the checkout logic and functionality
 import { globalEventListener } from './utils/globalListener.js';
+import { formatDate } from './utils/date.js';
 
-let cartOverview = ''
+let cartOverview = '';
+let setDate;
+const newFormattedDate = formatDate(setDate, 7);
 
 cartItems.forEach(item => {
     cartOverview += `<div class="cart-item-container">
@@ -43,7 +46,7 @@ cartItems.forEach(item => {
                                         name="delivery-option-${item.id}">
                                     <div>
                                         <div class="delivery-option-date">
-                                        Tuesday, June 21
+                                        ${newFormattedDate}
                                         </div>
                                         <div class="delivery-option-price">
                                         FREE Shipping
@@ -56,7 +59,7 @@ cartItems.forEach(item => {
                                         name="delivery-option-${item.id}">
                                     <div>
                                         <div class="delivery-option-date">
-                                        Wednesday, June 15
+                                        ${formatDate(setDate, 3)}
                                         </div>
                                         <div class="delivery-option-price">
                                         $4.99 - Shipping
@@ -69,7 +72,7 @@ cartItems.forEach(item => {
                                         name="delivery-option-${item.id}">
                                     <div>
                                         <div class="delivery-option-date">
-                                        Monday, June 13
+                                        ${formatDate(setDate, 1)}
                                         </div>
                                         <div class="delivery-option-price">
                                         $9.99 - Shipping
@@ -124,7 +127,7 @@ globalEventListener('click', orderSummaryBoxes, e => {
 // Delete function code
 function deleteCartItem(id) {
     const productToDelete = cartItems.findIndex(item => item.id === id);
-    if (productToDelete !== -1) cartItems.splice(productToDelete, 1);
+    if (productToDelete !== -1) cartItems.splice(productToDelete, 1);    
     
     localStorage.setItem('cartItems', JSON.stringify(cartItems));
     location.reload()
