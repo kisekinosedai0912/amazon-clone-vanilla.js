@@ -1,6 +1,7 @@
 // This file handles all the checkout logic and functionality
 import { globalEventListener } from './utils/globalListener.js';
-import { formatDate } from './utils/date.js';
+import { formatDate} from './utils/date.js';
+import { paymentTotal } from './utils/payment.js'; 
 
 let cartOverview = '';
 let setDate;
@@ -148,3 +149,43 @@ globalEventListener('click', orderSummaryBoxes, e => {
     
     if (deleteLinks) deleteCartItem( deleteLinks.dataset.id);
 })
+
+paymentTotal(cartItems);
+
+(function renderPaymentSummary() {
+    let totalSummary = paymentTotal(cartItems);
+
+    const paymentInfo = `<div class="payment-summary-title">
+                            Order Summary
+                        </div>
+
+                        <div class="payment-summary-row">
+                            <div>Items (3):</div>
+                            <div class="payment-summary-money">₱${Math.round(totalSummary).toLocaleString("en-PH")}</div>
+                        </div>
+
+                        <div class="payment-summary-row">
+                            <div>Shipping &amp; handling:</div>
+                            <div class="payment-summary-money">₱4.99</div>
+                        </div>
+
+                        <div class="payment-summary-row subtotal-row">
+                            <div>Total before tax:</div>
+                            <div class="payment-summary-money">₱47.74</div>
+                        </div>
+
+                        <div class="payment-summary-row">
+                            <div>Estimated tax (10%):</div>
+                            <div class="payment-summary-money">₱4.77</div>
+                        </div>
+
+                        <div class="payment-summary-row total-row">
+                            <div>Order total:</div>
+                            <div class="payment-summary-money">₱52.51</div>
+                        </div>
+
+                        <button class="place-order-button button-primary">
+                            Place your order
+                        </button>`;
+    document.querySelector('.payment-summary').innerHTML = paymentInfo;
+})();
