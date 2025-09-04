@@ -1,32 +1,24 @@
 // Cart functionality js
+import { addToCartLogic } from './cartLogic.js';
+
 let cartItems = JSON.parse(localStorage.getItem('cartItems')) || [];
 const cartCount = document.getElementById('cart-count');
 cartCount.textContent = cartItems.length;
 
 // Function to add in cart
-function addToCart(id, quantity) {
-  const index = products.findIndex(product => product.id === id); 
-  if (index !== -1) {
-    const existing = cartItems.find(item => item.id === id);
+export function addToCart(id, quantity) {
+  let cartItems = JSON.parse(localStorage.getItem('cartItems')) || [];
+  cartItems = addToCartLogic(cartItems, products, id, quantity);
 
-    // Increment quantity if product is already in cart
-    if (existing) existing.quantity += quantity 
-    // If not, copy the existing products object and add quantity property
-    else cartItems.push({ ...products[index], quantity });
-  
-    localStorage.setItem('cartItems', JSON.stringify(cartItems));
-    cartCount.textContent = cartItems.length;
+  localStorage.setItem('cartItems', JSON.stringify(cartItems));
+  document.getElementById('cart-count').textContent = cartItems.length;
 
-    const productContainer = document.querySelector(`.product-container[data-id="${id}"]`);
-    const addedToCartText = productContainer.querySelector('.added-to-cart');
-
-    setTimeout(() => {
-      addedToCartText.style.opacity = 0;
-    },2000);
-    
-    return addedToCartText.style.opacity = 1;
-  }
+  const productContainer = document.querySelector(`.product-container[data-id="${id}"]`);
+  const addedToCartText = productContainer.querySelector('.added-to-cart');
+  addedToCartText.style.opacity = 1;
+  setTimeout(() => (addedToCartText.style.opacity = 0), 2000);
 }
+
 // Event listener for add to cart buttons
 document.querySelector('.products-grid').addEventListener('click', e => {
   if (e.target.classList.contains('add-to-cart-button')) {
