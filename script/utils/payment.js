@@ -7,11 +7,6 @@ export function paymentTotal(items) {
         total += itemPrice;
 
         const shippingOption = document.querySelector('.delivery-option-price');
-        console.log(shippingOption)
-        // const shippingFee = parseInt(shippingOption.replace(/[^\d]/g, ''), 10);
-        // totalSF += shippingFee;
     });
-    
-     
     return total;
 }
