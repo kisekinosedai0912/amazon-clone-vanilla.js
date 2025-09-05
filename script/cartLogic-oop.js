@@ -1,6 +1,6 @@
 export class Cart {
   constructor(products = []) {
-    this.items = [];
+    this.items = JSON.parse(localStorage.getItem('cartItems-oop')) || [];
     this.products = products; 
   }
 
@@ -11,6 +11,8 @@ export class Cart {
 
       if (existing) existing.quantity += quantity;
       else this.items.push({ ...this.products[index], quantity });
+
+      localStorage.setItem('cartItems-oop', JSON.stringify(this.items));
     }
     return this.items;
   }

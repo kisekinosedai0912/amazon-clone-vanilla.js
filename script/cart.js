@@ -7,7 +7,6 @@ cartCount.textContent = cartItems.length;
 
 // Function to add in cart
 export function addToCart(id, quantity) {
-  let cartItems = JSON.parse(localStorage.getItem('cartItems')) || [];
   cartItems = addToCartLogic(cartItems, products, id, quantity);
 
   localStorage.setItem('cartItems', JSON.stringify(cartItems));
