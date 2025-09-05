@@ -5,10 +5,14 @@ import { paymentTotal } from './utils/payment.js';
 
 let cartOverview = '';
 let setDate;
+const orderSummaryBoxes = document.querySelector('.order-summary');
 
 const checkoutSummary = {
+    cartItems: JSON.parse(localStorage.getItem('cartItems-oop')) || [],
+
+    // Function to render cart items
     renderCartItems() {
-        cartItems.forEach(item => {
+        this.cartItems.forEach(item => {
             cartOverview += `<div class="cart-item-container">
                                 <div class="delivery-date">
                                     Delivery date: Wednesday, September 3
@@ -84,84 +88,84 @@ const checkoutSummary = {
                                     </div>
                                 </div>
                             </div>`;
-            document.querySelector('.order-summary').innerHTML = cartOverview;
+            orderSummaryBoxes.innerHTML = cartOverview;
         });
+    },
 
-    }
-}
+    // Function to update cart items
+    updateCart(e) {
+        const updatedLinks = e.target.closest('.update-quantity-link');
+        const saveLinks = e.target.closest('.save-quantity-link');
 
+        if (updatedLinks) {
+            const productId = updatedLinks.dataset.id;
+            const product = this.cartItems.find(item => item.id === productId);
+            const container = updatedLinks.closest('.cart-item-container');
+            const qtyLabel = container.querySelector('.quantity-label');
 
+            qtyLabel.innerHTML = `<input type="number" class="new-quantity" min="1" max="20" value="${product.quantity}" />`;
 
-
-const orderSummaryBoxes = document.querySelector('.order-summary');
-// Update function code
-globalEventListener('click', orderSummaryBoxes, e => {
-    const updatedLinks = e.target.closest('.update-quantity-link');
-    const saveLinks = e.target.closest('.save-quantity-link');
-
-    if (updatedLinks) {
-        const productId = updatedLinks.dataset.id;
-        const product = cartItems.find(item => item.id === productId);
-        const container = updatedLinks.closest('.cart-item-container');
-        const qtyLabel = container.querySelector('.quantity-label');
-
-        qtyLabel.innerHTML = `<input type="number" class="new-quantity" min="1" max="20" value="${product.quantity}" />`;
-
-        updatedLinks.textContent = 'Save';
-        updatedLinks.classList.remove('update-quantity-link');
-        updatedLinks.classList.add('save-quantity-link');
-    }
-
-    if (saveLinks) {
-        const productId = saveLinks.dataset.id; 
-        const product = cartItems.find(item => item.id === productId);
-        const container = saveLinks.closest('.cart-item-container');
-        const updatedQty = container.querySelector('.new-quantity');
-        const parsedQty = parseInt(updatedQty.value, 10);
-
-        if (!isNaN(parsedQty) && parsedQty > 0) {
-        product.quantity = parsedQty;
-        localStorage.setItem('cartItems', JSON.stringify(cartItems));
+            updatedLinks.textContent = 'Save';
+            updatedLinks.classList.remove('update-quantity-link');
+            updatedLinks.classList.add('save-quantity-link');
         }
 
-        container.querySelector('.quantity-label').textContent = product.quantity;
+        if (saveLinks) {
+            const productId = saveLinks.dataset.id; 
+            const product = this.cartItems.find(item => item.id === productId);
+            const container = saveLinks.closest('.cart-item-container');
+            const updatedQty = container.querySelector('.new-quantity');
+            const parsedQty = parseInt(updatedQty.value, 10);
 
-        saveLinks.textContent = 'Update';
-        saveLinks.classList.remove('save-quantity-link');
-        saveLinks.classList.add('update-quantity-link');
+            if (!isNaN(parsedQty) && parsedQty > 0) {
+                product.quantity = parsedQty;
+                localStorage.setItem('cartItems-oop', JSON.stringify(this.cartItems));
+            }
+
+            container.querySelector('.quantity-label').textContent = product.quantity;
+
+            saveLinks.textContent = 'Update';
+            saveLinks.classList.remove('save-quantity-link');
+            saveLinks.classList.add('update-quantity-link');
+        }
+    },
+
+    // Function for deleting cart items
+    deleteCartItem(id) {
+        const productToDelete = this.cartItems.findIndex(item => item.id === id);
+        if (productToDelete !== -1) this.cartItems.splice(productToDelete, 1);    
+        
+        localStorage.setItem('cartItems-oop', JSON.stringify(this.cartItems));
+        location.reload()
+    },
+
+    // Function for radio select and update
+    selectShippingOptions(e) {
+        if (e.target.matches(`input[type="radio"][name^="delivery-option-"]`)) {
+            const optionContainer = e.target.closest('.delivery-option');
+            const productContainer = e.target.closest('.cart-item-container');
+            const deliveryDate = productContainer.querySelector('.delivery-date');
+            const date = optionContainer.querySelector('.delivery-option-date');
+            
+            return deliveryDate.textContent = `Delivery date: ${date.textContent}`;
+        }
     }
-})
-
-globalEventListener('change', orderSummaryBoxes, e => {
-  if (e.target.matches(`input[type="radio"][name^="delivery-option-"]`)) {
-    const optionContainer = e.target.closest('.delivery-option');
-    const productContainer = e.target.closest('.cart-item-container');
-    const deliveryDate = productContainer.querySelector('.delivery-date');
-    const date = optionContainer.querySelector('.delivery-option-date');
-    
-    return deliveryDate.textContent = `Delivery date: ${date.textContent}`;
-  }
-});
-
-// Delete function code
-function deleteCartItem(id) {
-    const productToDelete = cartItems.findIndex(item => item.id === id);
-    if (productToDelete !== -1) cartItems.splice(productToDelete, 1);    
-    
-    localStorage.setItem('cartItems', JSON.stringify(cartItems));
-    location.reload()
 }
+checkoutSummary.renderCartItems();
 
+// Event listeners
+globalEventListener('click', orderSummaryBoxes, e => checkoutSummary.updateCart(e));
+globalEventListener('change', orderSummaryBoxes, e => checkoutSummary.selectShippingOptions(e));
 globalEventListener('click', orderSummaryBoxes, e => {
     const deleteLinks = e.target.closest('.delete-quantity-link');
     
     if (deleteLinks) deleteCartItem( deleteLinks.dataset.id);
 })
 
-paymentTotal(cartItems);
+paymentTotal(checkoutSummary.cartItems);
 
 (function renderPaymentSummary() {
-    let totalSummary = paymentTotal(cartItems);
+    let totalSummary = paymentTotal(checkoutSummary.cartItems);
 
     const paymentInfo = `<div class="payment-summary-title">
                             Order Summary
