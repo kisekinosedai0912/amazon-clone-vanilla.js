@@ -5,86 +5,93 @@ import { paymentTotal } from './utils/payment.js';
 
 let cartOverview = '';
 let setDate;
-let cartItems = JSON.parse(localStorage.getItem('cartItems')) || [];
 
-cartItems.forEach(item => {
-    cartOverview += `<div class="cart-item-container">
-                        <div class="delivery-date">
-                            Delivery date: Wednesday, September 3
-                        </div>
+const checkoutSummary = {
+    renderCartItems() {
+        cartItems.forEach(item => {
+            cartOverview += `<div class="cart-item-container">
+                                <div class="delivery-date">
+                                    Delivery date: Wednesday, September 3
+                                </div>
 
-                        <div class="cart-item-details-grid">
-                            <img class="product-image"
-                                src="${item.image}">
+                                <div class="cart-item-details-grid">
+                                    <img class="product-image"
+                                        src="${item.image}">
 
-                            <div class="cart-item-details">
-                                <div class="product-name">
-                                    ${item.productName}
-                                </div>
-                                <div class="product-price">
-                                    ₱${item.price.toLocaleString("en-PH")}
-                                </div>
-                                <div class="product-quantity">
-                                    <span>
-                                        Quantity: <span class="quantity-label">${item.quantity}</span>
-                                    </span>
-                                    <span class="update-quantity-link link-primary" data-id="${item.id}">
-                                        Update
-                                    </span>
-                                    <span class="delete-quantity-link link-primary" data-id="${item.id}">
-                                        Delete
-                                    </span>
-                                </div>
-                            </div>
-
-                            <div class="delivery-options">
-                                <div class="delivery-options-title">
-                                    Choose a delivery option:
-                                </div>
-                                <div class="delivery-option">
-                                    <input type="radio" checked
-                                        class="delivery-option-input"
-                                        name="delivery-option-${item.id}">
-                                    <div>
-                                        <div class="delivery-option-date">
-                                        ${formatDate(setDate, 7)}
+                                    <div class="cart-item-details">
+                                        <div class="product-name">
+                                            ${item.productName}
                                         </div>
-                                        <div class="delivery-option-price">
-                                        FREE Shipping
+                                        <div class="product-price">
+                                            ₱${item.price.toLocaleString("en-PH")}
+                                        </div>
+                                        <div class="product-quantity">
+                                            <span>
+                                                Quantity: <span class="quantity-label">${item.quantity}</span>
+                                            </span>
+                                            <span class="update-quantity-link link-primary" data-id="${item.id}">
+                                                Update
+                                            </span>
+                                            <span class="delete-quantity-link link-primary" data-id="${item.id}">
+                                                Delete
+                                            </span>
+                                        </div>
+                                    </div>
+
+                                    <div class="delivery-options">
+                                        <div class="delivery-options-title">
+                                            Choose a delivery option:
+                                        </div>
+                                        <div class="delivery-option">
+                                            <input type="radio" checked
+                                                class="delivery-option-input"
+                                                name="delivery-option-${item.id}">
+                                            <div>
+                                                <div class="delivery-option-date">
+                                                ${formatDate(setDate, 7)}
+                                                </div>
+                                                <div class="delivery-option-price">
+                                                FREE Shipping
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <div class="delivery-option">
+                                            <input type="radio"
+                                                class="delivery-option-input"
+                                                name="delivery-option-${item.id}">
+                                            <div>
+                                                <div class="delivery-option-date">
+                                                ${formatDate(setDate, 3)}
+                                                </div>
+                                                <div class="delivery-option-price">
+                                                ₱150 - Shipping
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <div class="delivery-option">
+                                            <input type="radio"
+                                                class="delivery-option-input"
+                                                name="delivery-option-${item.id}">
+                                            <div>
+                                                <div class="delivery-option-date">
+                                                ${formatDate(setDate, 1)}
+                                                </div>
+                                                <div class="delivery-option-price">
+                                                ₱200 - Shipping
+                                                </div>
+                                            </div>
                                         </div>
                                     </div>
                                 </div>
-                                <div class="delivery-option">
-                                    <input type="radio"
-                                        class="delivery-option-input"
-                                        name="delivery-option-${item.id}">
-                                    <div>
-                                        <div class="delivery-option-date">
-                                        ${formatDate(setDate, 3)}
-                                        </div>
-                                        <div class="delivery-option-price">
-                                        ₱150 - Shipping
-                                        </div>
-                                    </div>
-                                </div>
-                                <div class="delivery-option">
-                                    <input type="radio"
-                                        class="delivery-option-input"
-                                        name="delivery-option-${item.id}">
-                                    <div>
-                                        <div class="delivery-option-date">
-                                        ${formatDate(setDate, 1)}
-                                        </div>
-                                        <div class="delivery-option-price">
-                                        ₱200 - Shipping
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-                    </div>`;
-    document.querySelector('.order-summary').innerHTML = cartOverview;
-});
+                            </div>`;
+            document.querySelector('.order-summary').innerHTML = cartOverview;
+        });
+
+    }
+}
+
+
+
 
 const orderSummaryBoxes = document.querySelector('.order-summary');
 // Update function code
