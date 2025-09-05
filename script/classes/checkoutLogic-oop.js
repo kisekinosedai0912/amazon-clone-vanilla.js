@@ -15,7 +15,6 @@ export class Checkout {
             const qtyLabel = container.querySelector('.quantity-label');
 
             qtyLabel.innerHTML = `<input type="number" class="new-quantity" min="1" max="20" value="${product.quantity}" />`;
-
             updatedLinks.textContent = 'Save';
             updatedLinks.classList.remove('update-quantity-link');
             updatedLinks.classList.add('save-quantity-link');

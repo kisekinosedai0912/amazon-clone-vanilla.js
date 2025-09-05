@@ -16,7 +16,7 @@ const items = {
 
                         <div class="product-rating-container">
                             <img class="product-rating-stars"
-                            src="images/ratings/rating-${product.rating.stars * 10}.png">
+                            src="../images/ratings/rating-${product.rating.stars * 10}.png">
                             <div class="product-rating-count link-primary">
                             ${product.rating.count}
                             </div>
@@ -35,7 +35,7 @@ const items = {
                         <div class="product-spacer"></div>
 
                         <div class="added-to-cart">
-                            <img src="images/icons/checkmark.png">
+                            <img src="../images/icons/checkmark.png">
                             Added
                         </div>
 
