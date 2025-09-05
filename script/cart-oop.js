@@ -1,5 +1,5 @@
 // Cart functionality js
-import { Cart } from './cartLogic-oop.js';
+import { Cart } from './classes/cartLogic-oop.js';
 import { globalEventListener } from './utils/globalListener.js'
 
 const myCart = new Cart(products);

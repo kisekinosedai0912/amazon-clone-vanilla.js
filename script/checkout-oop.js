@@ -1,18 +1,21 @@
-// This file handles all the checkout logic and functionality
+// This file initializes all the logics inherited from the cart related classes
 import { globalEventListener } from './utils/globalListener.js';
 import { formatDate} from './utils/date.js';
 import { paymentTotal } from './utils/payment.js'; 
+import { Checkout } from './classes/checkoutLogic-oop.js';
 
-let cartOverview = '';
 let setDate;
+let cartOverview = '';
+let  cartItems = JSON.parse(localStorage.getItem('cartItems-oop')) || [];
 const orderSummaryBoxes = document.querySelector('.order-summary');
 
-const checkoutSummary = {
-    cartItems: JSON.parse(localStorage.getItem('cartItems-oop')) || [],
+// Instance of checkout class
+const checkout = new Checkout();
 
+const checkoutSummary = {
     // Function to render cart items
     renderCartItems() {
-        this.cartItems.forEach(item => {
+        cartItems.forEach(item => {
             cartOverview += `<div class="cart-item-container">
                                 <div class="delivery-date">
                                     Delivery date: Wednesday, September 3
@@ -92,51 +95,43 @@ const checkoutSummary = {
         });
     },
 
-    // Function to update cart items
-    updateCart(e) {
-        const updatedLinks = e.target.closest('.update-quantity-link');
-        const saveLinks = e.target.closest('.save-quantity-link');
+    // Function to render payment summary
+    renderPaymentSummary() {
+        let totalSummary = paymentTotal(cartItems);
 
-        if (updatedLinks) {
-            const productId = updatedLinks.dataset.id;
-            const product = this.cartItems.find(item => item.id === productId);
-            const container = updatedLinks.closest('.cart-item-container');
-            const qtyLabel = container.querySelector('.quantity-label');
+        const paymentInfo = `<div class="payment-summary-title">
+                                Order Summary
+                            </div>
 
-            qtyLabel.innerHTML = `<input type="number" class="new-quantity" min="1" max="20" value="${product.quantity}" />`;
+                            <div class="payment-summary-row">
+                                <div>Items (3):</div>
+                                <div class="payment-summary-money">₱${Math.round(totalSummary).toLocaleString("en-PH")}</div>
+                            </div>
 
-            updatedLinks.textContent = 'Save';
-            updatedLinks.classList.remove('update-quantity-link');
-            updatedLinks.classList.add('save-quantity-link');
-        }
+                            <div class="payment-summary-row">
+                                <div>Shipping &amp; handling:</div>
+                                <div class="payment-summary-money">₱4.99</div>
+                            </div>
 
-        if (saveLinks) {
-            const productId = saveLinks.dataset.id; 
-            const product = this.cartItems.find(item => item.id === productId);
-            const container = saveLinks.closest('.cart-item-container');
-            const updatedQty = container.querySelector('.new-quantity');
-            const parsedQty = parseInt(updatedQty.value, 10);
+                            <div class="payment-summary-row subtotal-row">
+                                <div>Total before tax:</div>
+                                <div class="payment-summary-money">₱47.74</div>
+                            </div>
 
-            if (!isNaN(parsedQty) && parsedQty > 0) {
-                product.quantity = parsedQty;
-                localStorage.setItem('cartItems-oop', JSON.stringify(this.cartItems));
-            }
+                            <div class="payment-summary-row">
+                                <div>Estimated tax (10%):</div>
+                                <div class="payment-summary-money">₱4.77</div>
+                            </div>
 
-            container.querySelector('.quantity-label').textContent = product.quantity;
+                            <div class="payment-summary-row total-row">
+                                <div>Order total:</div>
+                                <div class="payment-summary-money">₱52.51</div>
+                            </div>
 
-            saveLinks.textContent = 'Update';
-            saveLinks.classList.remove('save-quantity-link');
-            saveLinks.classList.add('update-quantity-link');
-        }
-    },
-
-    // Function for deleting cart items
-    deleteCartItem(id) {
-        const productToDelete = this.cartItems.findIndex(item => item.id === id);
-        if (productToDelete !== -1) this.cartItems.splice(productToDelete, 1);    
-        
-        localStorage.setItem('cartItems-oop', JSON.stringify(this.cartItems));
-        location.reload()
+                            <button class="place-order-button button-primary">
+                                Place your order
+                            </button>`;
+        document.querySelector('.payment-summary').innerHTML = paymentInfo;
     },
 
     // Function for radio select and update
@@ -154,50 +149,13 @@ const checkoutSummary = {
 checkoutSummary.renderCartItems();
 
 // Event listeners
-globalEventListener('click', orderSummaryBoxes, e => checkoutSummary.updateCart(e));
+globalEventListener('click', orderSummaryBoxes, e => checkout.updateCart(e));
 globalEventListener('change', orderSummaryBoxes, e => checkoutSummary.selectShippingOptions(e));
 globalEventListener('click', orderSummaryBoxes, e => {
     const deleteLinks = e.target.closest('.delete-quantity-link');
     
-    if (deleteLinks) deleteCartItem( deleteLinks.dataset.id);
-})
+    if (deleteLinks) checkout.deleteCartItem( deleteLinks.dataset.id);
+});
 
-paymentTotal(checkoutSummary.cartItems);
-
-(function renderPaymentSummary() {
-    let totalSummary = paymentTotal(checkoutSummary.cartItems);
-
-    const paymentInfo = `<div class="payment-summary-title">
-                            Order Summary
-                        </div>
-
-                        <div class="payment-summary-row">
-                            <div>Items (3):</div>
-                            <div class="payment-summary-money">₱${Math.round(totalSummary).toLocaleString("en-PH")}</div>
-                        </div>
-
-                        <div class="payment-summary-row">
-                            <div>Shipping &amp; handling:</div>
-                            <div class="payment-summary-money">₱4.99</div>
-                        </div>
-
-                        <div class="payment-summary-row subtotal-row">
-                            <div>Total before tax:</div>
-                            <div class="payment-summary-money">₱47.74</div>
-                        </div>
-
-                        <div class="payment-summary-row">
-                            <div>Estimated tax (10%):</div>
-                            <div class="payment-summary-money">₱4.77</div>
-                        </div>
-
-                        <div class="payment-summary-row total-row">
-                            <div>Order total:</div>
-                            <div class="payment-summary-money">₱52.51</div>
-                        </div>
-
-                        <button class="place-order-button button-primary">
-                            Place your order
-                        </button>`;
-    document.querySelector('.payment-summary').innerHTML = paymentInfo;
-})();
+paymentTotal(cartItems);
+checkoutSummary.renderPaymentSummary();
