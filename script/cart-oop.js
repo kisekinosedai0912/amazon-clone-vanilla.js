@@ -1,6 +1,7 @@
 // Cart functionality js
 import { Cart } from './classes/cartLogic-oop.js';
 import { globalEventListener } from './utils/globalListener.js'
+import { products } from '../data/products.js'
 
 const myCart = new Cart(products);
 const cartCount = document.getElementById('cart-count');

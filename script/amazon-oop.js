@@ -1,4 +1,6 @@
 // Loading products in the amazon page js
+import { products } from "../data/products.js";
+
 let productHTML = '';
 
 const items = {
