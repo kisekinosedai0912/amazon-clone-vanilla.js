@@ -18,14 +18,14 @@ const items = {
 
                         <div class="product-rating-container">
                             <img class="product-rating-stars"
-                            src="../images/ratings/rating-${product.rating.stars * 10}.png">
+                            src="${product.getImgPath()}">
                             <div class="product-rating-count link-primary">
                             ${product.rating.count}
                             </div>
                         </div>
 
                         <div class="product-price">
-                            ₱${product.price.toLocaleString("en-PH")}
+                            ₱${product.formatPrice()}
                         </div>
 
                         <div class="product-quantity-container">

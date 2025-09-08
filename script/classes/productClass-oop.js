@@ -7,4 +7,12 @@ export class Product {
         this.price = products.price;
         this.keywords = products.keywords;
     }
+
+    getImgPath() {
+        return `../images/ratings/rating-${this.rating.stars * 10}.png`;
+    }
+
+    formatPrice() {
+        return this.price.toLocaleString("en-PH");
+    }
 }
